@@ -18,6 +18,74 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <style>
+        /* Modal Custom para el Mapa */
+        #customMapModal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-map-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: mapFadeIn 0.3s;
+        }
+
+        .custom-map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #bfa378;
+            padding-bottom: 10px;
+        }
+
+        .custom-map-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .custom-map-close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+
+        .custom-map-close:hover {
+            color: #333;
+        }
+
+        @keyframes mapFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Estilos para el popup del mapa */
         .map-popup-card {
             text-align: center;
@@ -440,31 +508,30 @@
 
     <div id="footer-placeholder"></div>
 
-    <!-- Modal del Mapa Interactivo -->
-    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="mapModalLabel"
-                        style="font-family: 'Playfair Display', serif; font-weight: bold;">Mapa de Propiedades</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal Custom del Mapa Interactivo -->
+    <div id="customMapModal">
+        <div class="custom-map-content">
+            <div class="custom-map-header">
+                <h5 class="custom-map-title">Mapa de Propiedades</h5>
+                <button type="button" class="custom-map-close" onclick="cerrarMapaInteractivo()">&times;</button>
+            </div>
+            <div style="position: relative; padding: 0;">
+                <!-- Overlay de Carga -->
+                <div id="map-loading-overlay"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; display: none;">
+                    <i class="fas fa-circle-notch fa-spin fa-3x" style="color: #bfa378;"></i>
+                    <p class="mt-3 fw-bold" style="color: #555; text-align: center;">Ubicando propiedades en el mapa...
+                        <br><small style="font-weight: normal;" id="map-progress-text"></small></p>
                 </div>
-                <div class="modal-body position-relative" style="padding: 0;">
-                    <!-- Overlay de Carga -->
-                    <div id="map-loading-overlay"
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; display: none;">
-                        <i class="fas fa-circle-notch fa-spin fa-3x" style="color: #bfa378;"></i>
-                        <p class="mt-3 fw-bold" style="color: #555;">Ubicando propiedades en el mapa... <br><small
-                                style="font-weight: normal;" id="map-progress-text"></small></p>
-                    </div>
-                    <!-- Contenedor del Mapa -->
-                    <div id="interactive-map" style="width: 100%; height: 500px;"></div>
-                </div>
-                <div class="modal-footer">
-                    <span class="text-muted small me-auto"><i class="fas fa-info-circle"></i> Mostrando propiedades de
-                        la página actual.</span>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar Mapa</button>
-                </div>
+                <!-- Contenedor del Mapa -->
+                <div id="interactive-map" style="width: 100%; height: 500px; border-radius: 4px; z-index: 1;"></div>
+            </div>
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span class="text-muted small" style="font-size: 0.85rem;"><i class="fas fa-info-circle"></i> Mostrando
+                    propiedades de la página actual.</span>
+                <button type="button" class="btn btn-secondary"
+                    style="padding: 8px 16px; background: #6c757d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-family: 'Inter', sans-serif;"
+                    onclick="cerrarMapaInteractivo()">Cerrar Mapa</button>
             </div>
         </div>
     </div>
@@ -817,11 +884,14 @@
             return null;
         }
 
+        function cerrarMapaInteractivo() {
+            document.getElementById('customMapModal').style.display = 'none';
+        }
+
         async function abrirMapaInteractivo() {
-            // 1. Mostrar el Modal de Bootstrap
-            const mapModalElement = document.getElementById('mapModal');
-            const mapModal = new bootstrap.Modal(mapModalElement);
-            mapModal.show();
+            // 1. Mostrar el Modal Custom
+            const mapModal = document.getElementById('customMapModal');
+            mapModal.style.display = 'flex';
 
             // 2. Inicializar el mapa si no existe
             if (!map) {
