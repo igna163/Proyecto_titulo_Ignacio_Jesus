@@ -321,18 +321,108 @@
                     </div>
                 </div>
 
-                <form class="contact-form" id="main-contact-form">
+                <style>
+                    /* --- ESTILOS PREMIUM PARA FORMULARIO DE CONTACTO --- */
+                    .premium-contact-form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1.2rem;
+                        background: #ffffff;
+                        padding: 35px;
+                        border-radius: 12px;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+                    }
+
+                    .premium-contact-form .form-group {
+                        margin-bottom: 0;
+                    }
+
+                    .premium-contact-form .form-control {
+                        width: 100%;
+                        padding: 16px 20px;
+                        font-size: 1rem;
+                        font-family: 'Inter', sans-serif;
+                        color: #333;
+                        background-color: #f8f9fa;
+                        border: 1px solid #e1e5eb;
+                        border-radius: 8px;
+                        transition: all 0.3s ease;
+                        box-sizing: border-box;
+                        height: 56px;
+                    }
+
+                    .premium-contact-form textarea.form-control {
+                        height: auto;
+                        min-height: 120px;
+                        resize: vertical;
+                    }
+
+                    .premium-contact-form .form-control:focus {
+                        outline: none;
+                        border-color: #bfa378;
+                        background-color: #fff;
+                        box-shadow: 0 0 0 3px rgba(191, 163, 120, 0.15);
+                    }
+
+                    .premium-contact-form .custom-select {
+                        appearance: none;
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: right 20px center;
+                        background-size: 16px;
+                        cursor: pointer;
+                        color: #555;
+                    }
+
+                    .premium-contact-form .custom-select:invalid,
+                    .premium-contact-form .custom-select option[value=""] {
+                        color: #999;
+                    }
+
+                    .premium-contact-form .custom-select option {
+                        color: #333;
+                        background: #fff;
+                        padding: 10px;
+                    }
+
+                    .premium-contact-form .premium-btn {
+                        background-color: #2c3e50;
+                        color: #fff;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 18px;
+                        font-size: 1rem;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        margin-top: 10px;
+                    }
+
+                    .premium-contact-form .premium-btn:hover {
+                        background-color: #1a252f;
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 20px rgba(44, 62, 80, 0.2);
+                    }
+                </style>
+
+                <form class="contact-form premium-contact-form" id="main-contact-form">
                     <div class="form-group">
-                        <input type="text" id="contact-name" placeholder="Nombre completo" required>
+                        <input type="text" id="contact-name" class="form-control" placeholder="Nombre completo"
+                            required>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="contact-email" placeholder="Correo electrónico" required>
+                        <input type="email" id="contact-email" class="form-control" placeholder="Correo electrónico"
+                            required>
                     </div>
                     <div class="form-group">
-                        <input type="tel" id="contact-phone" placeholder="Teléfono">
+                        <input type="tel" id="contact-phone" class="form-control" placeholder="Teléfono">
                     </div>
                     <div class="form-group">
-                        <select id="contact-project-type" class="form-control" required>
+                        <select id="contact-project-type" class="form-control custom-select" required>
                             <option value="" disabled selected>Tipo de proyecto o necesidad</option>
                             <option value="Comprar">Comprar</option>
                             <option value="Arrendar">Arrendar</option>
@@ -345,7 +435,7 @@
                             placeholder="Ubicación del proyecto" required>
                     </div>
                     <div class="form-group">
-                        <select id="contact-property-type" class="form-control" required>
+                        <select id="contact-property-type" class="form-control custom-select" required>
                             <option value="" disabled selected>Tipo de propiedad</option>
                             <option value="Casa">Casa</option>
                             <option value="Departamento">Departamento</option>
@@ -357,11 +447,10 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <textarea id="contact-message" placeholder="¿En qué podemos ayudarle?" rows="4"
-                            required></textarea>
+                        <textarea id="contact-message" class="form-control" placeholder="¿En qué podemos ayudarle?"
+                            rows="4" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"
-                        style="padding: 15px; font-size: 1rem;">Enviar Mensaje</button>
+                    <button type="submit" class="btn btn-primary btn-block premium-btn">Enviar Mensaje</button>
                 </form>
 
             </div>
