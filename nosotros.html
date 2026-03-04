@@ -153,6 +153,141 @@
             color: #333;
             font-weight: 500;
         }
+
+        /* ================= ESTILOS ALIANZAS Y CONVENIOS ================= */
+        .alianzas-section {
+            padding: 80px 0;
+            background: #fff;
+        }
+
+        .alianzas-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .alianza-item {
+            background: #f9f9f9;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 220px;
+            text-align: center;
+        }
+
+        .alianza-item:hover {
+            transform: translateY(-5px);
+            background: #bfa378;
+            color: #fff;
+        }
+
+        /* ================= ESTILOS ORGANIGRAMA ================= */
+        .organigrama-section {
+            padding: 80px 0;
+            background: #f9f9f9;
+        }
+
+        .gerencia-card {
+            background: #fff;
+            padding: 35px 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(191, 163, 120, 0.15);
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto 50px;
+            border-top: 4px solid #bfa378;
+        }
+
+        .gerencia-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .gerencia-card p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .gerencia-icon {
+            font-size: 3rem;
+            color: #bfa378;
+            margin-bottom: 20px;
+        }
+
+        .areas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .area-card {
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .area-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .area-icon {
+            font-size: 2.2rem;
+            color: #bfa378;
+            margin-bottom: 20px;
+        }
+
+        .area-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .area-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+
+        .area-card ul li {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 20px;
+            line-height: 1.5;
+        }
+
+        .area-card ul li::before {
+            content: '\f054';
+            /* Icono de flecha de FontAwesome */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #bfa378;
+            font-size: 0.7rem;
+            position: absolute;
+            left: 0;
+            top: 4px;
+        }
     </style>
 </head>
 
@@ -246,6 +381,100 @@
                     <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?auto=format&fit=crop&q=80"
                         alt="Inversionista en Los Andes">
                     <div class="gallery-caption text-center">Tu futuro, nuestra responsabilidad</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ALIANZAS Y CONVENIOS ================= -->
+    <section class="alianzas-section">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <span class="overline">Nuestra red</span>
+                <h2 class="section-title">Alianzas y Convenios</h2>
+                <p class="text-muted mx-auto" style="max-width: 700px; line-height: 1.8;">
+                    Trabajamos de la mano con las plataformas y entidades más destacadas del rubro para asegurar una
+                    gestión ágil, segura y con máxima visibilidad.
+                </p>
+            </div>
+            <div class="alianzas-grid">
+                <div class="alianza-item">Nexxos</div>
+                <div class="alianza-item">Mercado Libre</div>
+                <div class="alianza-item">TOC TOC</div>
+                <div class="alianza-item">Goplaceit</div>
+                <div class="alianza-item">Notarías de confianza</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ORGANIGRAMA ================= -->
+    <section class="organigrama-section">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 4rem;">
+                <span class="overline">Estructura de Trabajo</span>
+                <h2 class="section-title">Nuestro Equipo y Organización</h2>
+                <p class="text-muted mx-auto" style="max-width: 700px; line-height: 1.8;">
+                    Para garantizar resultados excepcionales, estructuramos nuestro servicio a través de un liderazgo
+                    unificado y 5 áreas especializadas que cubren todos los aspectos del éxito inmobiliario.
+                </p>
+            </div>
+
+            <!-- Tarjeta Central: Gerencia -->
+            <div class="gerencia-card animate-up">
+                <i class="fas fa-user-tie gerencia-icon"></i>
+                <h3>Gerente / Dueño</h3>
+                <p>Lidera la gestión integral de la empresa, supervisando estratégicamente y coordinando con excelencia
+                    el flujo de las 5 áreas clave.</p>
+            </div>
+
+            <!-- Tarjetas de Áreas Clave -->
+            <div class="areas-grid">
+                <div class="area-card animate-up delay-1">
+                    <i class="fas fa-bullseye area-icon"></i>
+                    <h4>Dirección y Estrategia</h4>
+                    <ul>
+                        <li>Define precios, metas y enfoque del negocio.</li>
+                        <li>Decide meticulosamente en qué propiedades trabajar.</li>
+                    </ul>
+                </div>
+
+                <div class="area-card animate-up delay-1">
+                    <i class="fas fa-handshake area-icon"></i>
+                    <h4>Área Comercial</h4>
+                    <ul>
+                        <li>Captación de propiedades.</li>
+                        <li>Atención especializada a clientes compradores y arrendatarios.</li>
+                        <li>Negociación estructurada y cierre.</li>
+                    </ul>
+                </div>
+
+                <div class="area-card animate-up delay-2">
+                    <i class="fas fa-bullhorn area-icon"></i>
+                    <h4>Marketing</h4>
+                    <ul>
+                        <li>Publicación estratégica en portales.</li>
+                        <li>Gestión activa de redes sociales.</li>
+                        <li>Coordinación de fotografía profesional y avisos.</li>
+                    </ul>
+                </div>
+
+                <div class="area-card animate-up delay-2">
+                    <i class="fas fa-folder-open area-icon"></i>
+                    <h4>Gestión Administrativa</h4>
+                    <ul>
+                        <li>Gestión rigurosa de contratos.</li>
+                        <li>Monitoreo y seguimiento de pagos.</li>
+                        <li>Organización impecable de documentos.</li>
+                    </ul>
+                </div>
+
+                <div class="area-card animate-up delay-3">
+                    <i class="fas fa-balance-scale area-icon"></i>
+                    <h4>Gestión Legal y Contable</h4>
+                    <ul>
+                        <li>Coordinación con abogado externo (escrituras y estudios de títulos).</li>
+                        <li>Apoyo integral de contador externo para impuestos.</li>
+                    </ul>
                 </div>
             </div>
         </div>
