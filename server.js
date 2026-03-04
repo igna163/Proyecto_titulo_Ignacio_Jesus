@@ -2111,32 +2111,7 @@ app.post('/api/propiedades/:id/duplicar', async (req, res) => {
     }
 });
 
-// --- API: OBTENER HISTORIAS (Solo las aprobadas) ---
-app.get('/api/historias', async (req, res) => {
-    try {
-        const result = await pool.query("SELECT * FROM historias_exito WHERE estado = 'aprobado' ORDER BY fecha_creacion DESC");
-        res.json({ success: true, data: result.rows });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: 'Error al cargar historias' });
-    }
-});
 
-// --- API: GUARDAR NUEVA HISTORIA ---
-app.post('/api/historias', async (req, res) => {
-    const { nombre, titulo, servicio, testimonio, valoracion } = req.body;
-    // Nota: Por ahora manejamos foto como NULL, para subir fotos se requiere configuración extra de Multer
-    try {
-        await pool.query(
-            "INSERT INTO historias_exito (nombre_cliente, titulo_historia, servicio_realizado, testimonio, valoracion) VALUES ($1, $2, $3, $4, $5)",
-            [nombre, titulo, servicio, testimonio, valoracion || 5]
-        );
-        res.json({ success: true, message: 'Historia recibida correctamente' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: 'Error al guardar historia' });
-    }
-});
 
 // --- API: CHATBOT GROQ (Llama 3) ---
 const GROQ_API_KEY = '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'; // Replaced with actual key in execution
@@ -2256,15 +2231,20 @@ app.get('/api/historias', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM historias WHERE aprobado = TRUE ORDER BY id DESC');
         res.json({ success: true, data: result.rows });
-    } catch (err) { 
+    } catch (err) {
         console.error("Error obteniendo historias:", err);
         res.status(500).json({ success: false, message: 'Error en el servidor.' });
     }
 });
 
-app.post('/api/historias', async (req, res) => {
-    const { nombre_cliente, servicio_realizado, titulo_historia, testimonio, foto_url, valoracion } = req.body;
-    
+app.post('/api/historias', upload.single('foto'), async (req, res) => {
+    const { nombre_cliente, servicio_realizado, titulo_historia, testimonio, valoracion } = req.body;
+    let foto_url = null;
+
+    if (req.file) {
+        foto_url = '/uploads/' + req.file.filename;
+    }
+
     if (!nombre_cliente || !servicio_realizado || !titulo_historia || !testimonio || !valoracion) {
         return res.status(400).json({ success: false, message: 'Faltan campos obligatorios' });
     }
@@ -2276,7 +2256,7 @@ app.post('/api/historias', async (req, res) => {
             VALUES ($1, $2, $3, $4, $5, $6, FALSE) RETURNING *
         `;
         const values = [
-            nombre_cliente, servicio_realizado, titulo_historia, testimonio, foto_url || null, parseInt(valoracion) || 5
+            nombre_cliente, servicio_realizado, titulo_historia, testimonio, foto_url, parseInt(valoracion) || 5
         ];
 
         const result = await pool.query(query, values);

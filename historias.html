@@ -115,7 +115,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cargador.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 
     <script>
         let valoracionSeleccionada = 3; // Por defecto es 4 
@@ -204,20 +204,22 @@
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-            const data = {
-                nombre_cliente: document.getElementById('nombre_cliente').value,
-                servicio_realizado: document.getElementById('servicio_realizado').value,
-                titulo_historia: document.getElementById('titulo_historia').value,
-                testimonio: document.getElementById('testimonio').value,
-                foto_url: null, // Por ahora enviamos null
-                valoracion: valoracionSeleccionada
-            };
+            const formData = new FormData();
+            formData.append('nombre_cliente', document.getElementById('nombre_cliente').value);
+            formData.append('servicio_realizado', document.getElementById('servicio_realizado').value);
+            formData.append('titulo_historia', document.getElementById('titulo_historia').value);
+            formData.append('testimonio', document.getElementById('testimonio').value);
+            formData.append('valoracion', valoracionSeleccionada);
+
+            const fotoInput = document.getElementById('foto_url');
+            if (fotoInput.files.length > 0) {
+                formData.append('foto', fotoInput.files[0]);
+            }
 
             try {
                 const res = await fetch('/api/historias', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: formData
                 });
 
                 const json = await res.json();

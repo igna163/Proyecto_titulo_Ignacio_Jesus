@@ -121,15 +121,15 @@ let currentPage = 1;
 let rows = 9;
 let filteredData = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
     initAuth();
-    cargarIndicadores(); // ✅ ACTIVADO: Carga indicadores con estrategia blindada
-    setupNavigation();
-    setupChatbot();
-    setupContactForm();
+    if (typeof cargarIndicadores === 'function') cargarIndicadores(); // ✅ ACTIVADO: Carga indicadores con estrategia blindada
+    if (typeof setupNavigation === 'function') setupNavigation();
+    if (typeof setupChatbot === 'function') setupChatbot();
+    if (typeof setupContactForm === 'function') setupContactForm();
 
 
-    const page = document.body.getAttribute('data-page');
+    const page = document.body ? document.body.getAttribute('data-page') : null;
 
     // ======================================================
     // CASO 1: PANEL PRINCIPAL DEL CLIENTE
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CASO 3: ADMIN Y LÓGICA GENERAL
     // ======================================================
     if (page === 'admin-config') {
-        setupAdminConfig();
+        if (typeof setupAdminConfig === 'function') setupAdminConfig();
         const params = new URLSearchParams(window.location.search);
         if (params.get('change_password') === 'true') {
             setTimeout(() => {
@@ -214,28 +214,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         }
     }
-    if (page === 'admin-lista') { updateAdminList(); }
-    if (page === 'admin-historial') { loadHistoryList(); }
+    if (page === 'admin-lista' && typeof updateAdminList === 'function') { updateAdminList(); }
+    if (page === 'admin-historial' && typeof loadHistoryList === 'function') { loadHistoryList(); }
 
     // CASO 4: PÁGINAS PÚBLICAS
     if (!page || page === 'home' || page.includes('venta') || page.includes('arriendo')) {
-        setupHomeSearch();
-        readUrlFilters();
-        initPageLogic();
-        setupSearchAutocomplete();
-        setupRecoveryLogic(); // Lógica recuperar contraseña
+        if (typeof setupHomeSearch === 'function') setupHomeSearch();
+        if (typeof readUrlFilters === 'function') readUrlFilters();
+        if (typeof initPageLogic === 'function') initPageLogic();
+        if (typeof setupSearchAutocomplete === 'function') setupSearchAutocomplete();
+        if (typeof setupRecoveryLogic === 'function') setupRecoveryLogic(); // Lógica recuperar contraseña
     }
 
     // CASO ESPECIAL: PUBLICAR PROPIEDAD (Aquí activamos la IA)
     if (page === 'admin-publicar') {
-        setupPropertyForm();
-        setupAiDescriptionGenerator(); // <--- ✅ AQUÍ ACTIVAMOS A GEMINI
+        if (typeof setupPropertyForm === 'function') setupPropertyForm();
+        if (typeof setupAiDescriptionGenerator === 'function') setupAiDescriptionGenerator(); // <--- ✅ AQUÍ ACTIVAMOS A GEMINI
 
         const urlParams = new URLSearchParams(window.location.search);
         const editId = urlParams.get('id');
-        if (editId) loadPropertyForEdit(editId);
+        if (editId && typeof loadPropertyForEdit === 'function') loadPropertyForEdit(editId);
     }
-});
+}
+
+// Ensure the code runs even if DOMContentLoaded has already fired (common with modules)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
 
 
 
