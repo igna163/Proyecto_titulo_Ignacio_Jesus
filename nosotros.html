@@ -168,27 +168,36 @@
             margin-top: 40px;
         }
 
-        .alianza-item {
-            background: #f9f9f9;
-            padding: 20px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            color: #333;
-            font-size: 1.1rem;
-            transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+        .alianza-link {
             display: flex;
-            align-items: center;
             justify-content: center;
-            min-width: 220px;
-            text-align: center;
+            align-items: center;
+            width: 180px;
+            height: 120px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 15px;
+            text-decoration: none;
+            border: 1px solid #f2f2f2;
         }
 
-        .alianza-item:hover {
+        .alianza-link:hover {
             transform: translateY(-5px);
-            background: #bfa378;
-            color: #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+            border-color: #e0e0e0;
+        }
+
+        .alianza-link img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .alianza-link:hover img {
+            transform: scale(1.05);
         }
 
         /* ================= ESTILOS ORGANIGRAMA ================= */
@@ -398,11 +407,32 @@
                 </p>
             </div>
             <div class="alianzas-grid">
-                <div class="alianza-item">Nexxos</div>
-                <div class="alianza-item">Mercado Libre</div>
-                <div class="alianza-item">TOC TOC</div>
-                <div class="alianza-item">Goplaceit</div>
-                <div class="alianza-item">Notarías de confianza</div>
+                <!-- Nexxos -->
+                <a href="https://www.nexxos.cl" target="_blank" class="alianza-link" title="Visitar Nexxos">
+                    <img src="img/logo-nexxos.png" alt="Logo Nexxos">
+                </a>
+
+                <!-- Mercado Libre -->
+                <a href="https://www.mercadolibre.cl" target="_blank" class="alianza-link"
+                    title="Visitar Mercado Libre">
+                    <img src="img/logo-mercadolibre.png" alt="Logo Mercado Libre">
+                </a>
+
+                <!-- TOC TOC -->
+                <a href="https://www.toctoc.com" target="_blank" class="alianza-link" title="Visitar TOC TOC">
+                    <img src="img/logo-toctoc.png" alt="Logo TOC TOC">
+                </a>
+
+                <!-- Goplaceit -->
+                <a href="https://www.goplaceit.com/cl" target="_blank" class="alianza-link" title="Visitar Goplaceit">
+                    <img src="img/logo-goplaceit.png" alt="Logo Goplaceit">
+                </a>
+
+                <!-- Notarías de confianza -->
+                <!-- Enlace hacia la sección de contacto -->
+                <a href="index.html#contact" class="alianza-link" title="Notarías de confianza">
+                    <img src="img/logo-notarias.png" alt="Logo Notarías de Confianza">
+                </a>
             </div>
         </div>
     </section>
