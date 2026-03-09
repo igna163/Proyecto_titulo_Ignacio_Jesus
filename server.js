@@ -2229,15 +2229,7 @@ app.get('/api/db-test', async (req, res) => {
 
 app.get('/api/historias', async (req, res) => {
     try {
-        let result;
-        try {
-            // Intento 1: Con filtro de aprobado (esquema completo)
-            result = await pool.query('SELECT * FROM historias_exito WHERE aprobado = TRUE ORDER BY id DESC');
-        } catch (e) {
-            // Intento 2: Sin filtro (por si la columna 'aprobado' no existe aún)
-            console.warn('⚠️ Columna aprobado no encontrada, listando todas:', e.message);
-            result = await pool.query('SELECT * FROM historias_exito ORDER BY id DESC');
-        }
+        const result = await pool.query("SELECT * FROM historias_exito WHERE estado = 'aprobado' ORDER BY id DESC");
         res.json({ success: true, data: result.rows });
     } catch (err) {
         console.error("❌ Error obteniendo historias:", err.message);
@@ -2260,8 +2252,8 @@ app.post('/api/historias', upload.single('foto'), async (req, res) => {
     try {
         const query = `
             INSERT INTO historias_exito 
-            (nombre_cliente, servicio_realizado, titulo_historia, testimonio, foto_url, valoracion, aprobado)
-            VALUES ($1, $2, $3, $4, $5, $6, FALSE) RETURNING *
+            (nombre_cliente, servicio_realizado, titulo_historia, testimonio, foto_url, valoracion, estado)
+            VALUES ($1, $2, $3, $4, $5, $6, 'pendiente') RETURNING *
         `;
         const values = [
             nombre_cliente, servicio_realizado, titulo_historia, testimonio, foto_url, parseInt(valoracion) || 5
