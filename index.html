@@ -874,7 +874,7 @@
                 return;
             }
 
-            // E) ENVÍO A N8N (MODO PRUEBA)
+            // E) ENVÍO A N8N (PRODUCCIÓN)
             btnSubmit.disabled = true;
             btnSubmit.innerText = "Enviando...";
 
@@ -882,7 +882,7 @@
                 const datos = {
                     nombre: document.getElementById('contact-name').value,
                     email: document.getElementById('contact-email').value,
-                    telefono: "56" + cleanPhone, // Enviamos el código 56 ideal para conectarlo a WhatsApp luego
+                    telefono: "+56 " + cleanPhone,
                     tipoProyecto: document.getElementById('contact-project-type').value,
                     ubicacionProyecto: document.getElementById('contact-location').value,
                     tipoPropiedad: document.getElementById('contact-property-type').value,
@@ -890,37 +890,34 @@
                     origen: "Formulario Principal Web"
                 };
 
-                // Apuntamos a tu Webhook de prueba en n8n
+                // URL de producción n8n
                 const res = await fetch('https://n8n-marlen-auto.onrender.com/webhook/contacto-web', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
                 });
 
-                if (res.ok) {
-                    // Cambiamos el texto a "Enviado" como solicitaste
+                const data = await res.json();
+
+                if (data.success) {
                     btnSubmit.innerText = "¡Enviado!";
-                    btnSubmit.style.backgroundColor = "#2ecc71"; // Un toque visual verde de éxito
+                    btnSubmit.style.backgroundColor = "#2ecc71";
                     btnSubmit.style.borderColor = "#2ecc71";
                     btnSubmit.style.color = "#fff";
 
                     document.getElementById('main-contact-form').reset();
 
-                    // Pequeño timeout para permitir que el navegador actualice el texto del botón antes de la alerta
-                    setTimeout(() => {
-                        alert("✅ ¡Mensaje enviado con éxito! Marlen se contactará contigo pronto.");
+                    alert("✅ ¡Mensaje enviado con éxito! Marlen se contactará contigo pronto.");
 
-                        // Restauramos el botón después de cerrar la alerta
-                        setTimeout(() => {
-                            btnSubmit.disabled = false;
-                            btnSubmit.innerText = "Enviar Mensaje";
-                            btnSubmit.style.backgroundColor = "";
-                            btnSubmit.style.borderColor = "";
-                            btnSubmit.style.color = "";
-                        }, 1000);
-                    }, 100);
+                    setTimeout(() => {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerText = "Enviar Mensaje";
+                        btnSubmit.style.backgroundColor = "";
+                        btnSubmit.style.borderColor = "";
+                        btnSubmit.style.color = "";
+                    }, 1500);
                 } else {
-                    alert("❌ Error al enviar. El sistema de contacto está en mantenimiento.");
+                    alert("❌ " + (data.message || "Error al enviar. Inténtelo más tarde."));
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = "Enviar Mensaje";
                 }
