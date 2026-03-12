@@ -76,10 +76,12 @@ ul {
 }
 
 .nav-logo-img {
-    height: 90px;
-    /* Tamaño aumentado del logo */
+    height: 75px;
+    /* Tamaño ajustado para que no sobrepase la línea blanca */
     width: auto;
     object-fit: contain;
+    mix-blend-mode: multiply;
+    /* Combina el fondo beige con el blanco para que se vea transparente */
 }
 
 .nav-links {
