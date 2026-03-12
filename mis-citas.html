@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Visitas Agendadas | Marlen Guzmán</title>
+    <meta name="description" content="Consulta y gestiona tus visitas agendadas con Marlen Guzmán Propiedades. Solo necesitas tu correo electrónico.">
+    <link rel="icon" type="image/jpeg" href="Logo_MG.jpeg">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Estilos del sitio -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ===== RESET Y BASE ===== */
+        body {
+            padding-top: 80px;
+            background: #f8f5f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ===== HERO HEADER ===== */
+        .portal-hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #3a2d1e 100%);
+            padding: 70px 0 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portal-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 60% 40%, rgba(191, 163, 120, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .portal-hero .badge-tag {
+            display: inline-block;
+            background: rgba(191, 163, 120, 0.15);
+            border: 1px solid rgba(191, 163, 120, 0.4);
+            color: #bfa378;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+        }
+
+        .portal-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 14px;
+            line-height: 1.2;
+        }
+
+        .portal-hero h1 span {
+            color: #bfa378;
+        }
+
+        .portal-hero p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 1.05rem;
+            font-weight: 300;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ===== BUSCADOR ===== */
+        .search-wrapper {
+            max-width: 560px;
+            margin: -40px auto 0;
+            padding: 0 16px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
+            padding: 32px 36px;
+        }
+
+        .search-card label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e8e0d5;
+            transition: border-color 0.25s;
+        }
+
+        .search-input-group:focus-within {
+            border-color: #bfa378;
+        }
+
+        #email-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 13px 16px;
+            font-size: 0.95rem;
+            color: #333;
+            background: transparent;
+        }
+
+        #btn-buscar {
+            background: linear-gradient(135deg, #bfa378, #a38960);
+            color: #fff;
+            border: none;
+            padding: 13px 24px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #btn-buscar:hover {
+            opacity: 0.9;
+        }
+
+        #btn-buscar:active {
+            transform: scale(0.98);
+        }
+
+        #btn-buscar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ===== CONTENEDOR DE RESULTADOS ===== */
+        .results-section {
+            max-width: 760px;
+            margin: 40px auto 60px;
+            padding: 0 16px;
+        }
+
+        #results-header {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        #results-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #222;
+            margin-bottom: 4px;
+        }
+
+        #results-header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* ===== TARJETAS DE CITA ===== */
+        .cita-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #f0ebe4;
+        }
+
+        .cita-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .cita-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid #f5f0ea;
+            gap: 12px;
+        }
+
+        .cita-propiedad {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 1rem;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .estado-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 50px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .estado-confirmada  { background: #d4f0df; color: #1a7a3c; }
+        .estado-pendiente   { background: #fff3cd; color: #856404; }
+        .estado-cancelada   { background: #f8d7da; color: #842029; }
+        .estado-realizada   { background: #d1ecf1; color: #0c5460; }
+        .estado-otro        { background: #e2e3e5; color: #383d41; }
+
+        .cita-card-body {
+            padding: 16px 22px;
+        }
+
+        .cita-info-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .cita-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .cita-info-item i {
+            color: #bfa378;
+            font-size: 1rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .cita-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-cancelar {
+            background: transparent;
+            border: 1.5px solid #dc3545;
+            color: #dc3545;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-cancelar:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-reprogramar {
+            background: transparent;
+            border: 1.5px solid #6c757d;
+            color: #6c757d;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-reprogramar:hover {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        /* ===== FORMULARIO DE REPROGRAMACIÓN (inline) ===== */
+        .reprog-form {
+            display: none;
+            margin-top: 16px;
+            background: #faf8f5;
+            border: 1px solid #e8e0d5;
+            border-radius: 10px;
+            padding: 18px 20px;
+            animation: slideDown 0.25s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .reprog-form label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .reprog-form input[type="date"],
+        .reprog-form input[type="time"] {
+            width: 100%;
+            border: 1.5px solid #ddd;
+            border-radius: 7px;
+            padding: 9px 12px;
+            font-size: 0.9rem;
+            color: #333;
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .reprog-form input:focus {
+            border-color: #bfa378;
+        }
+
+        .btn-guardar-reprog {
+            background: linear-gradient(135deg, #bfa378, #a38960);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 22px;
+            font-weight: 600;
+            font-size: 0.87rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 14px;
+        }
+
+        .btn-guardar-reprog:hover { opacity: 0.88; }
+        .btn-guardar-reprog:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        .btn-cancelar-reprog {
+            background: transparent;
+            border: 1.5px solid #ccc;
+            color: #777;
+            border-radius: 8px;
+            padding: 9px 18px;
+            font-size: 0.87rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-cancelar-reprog:hover { background: #f0f0f0; }
+
+        /* ===== ESTADOS DE UI ===== */
+        .portal-loader {
+            text-align: center;
+            padding: 50px 20px;
+            display: none;
+        }
+
+        .portal-loader .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid #e8e0d5;
+            border-top-color: #bfa378;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .portal-loader p { color: #888; font-size: 0.95rem; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            display: none;
+        }
+
+        .empty-state .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f0ebe4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state .icon-circle i {
+            font-size: 2rem;
+            color: #bfa378;
+        }
+
+        .empty-state h3 {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p { color: #888; font-size: 0.95rem; }
+
+        .alert-portal {
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            margin-top: 12px;
+        }
+
+        /* ===== AVISO SOBRE CITAS CANCELADAS/REALIZADAS ===== */
+        .cita-card.cita-inactiva {
+            opacity: 0.6;
+        }
+
+        .cita-card.cita-inactiva .cita-actions {
+            display: none;
+        }
+
+        @media (max-width: 576px) {
+            .search-card { padding: 24px 20px; }
+            .portal-hero  { padding: 50px 0 55px; }
+            .cita-card-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="nav-placeholder"></div>
+
+    <!-- ===== HERO ===== -->
+    <div class="portal-hero">
+        <div class="container">
+            <div class="badge-tag"><i class="fas fa-calendar-check me-1"></i> Portal de Citas</div>
+            <h1>Mis Visitas <span>Agendadas</span></h1>
+            <p>Consulta, cancela o reprograma tus visitas usando solo tu correo electrónico.</p>
+        </div>
+    </div>
+
+    <!-- ===== BUSCADOR ===== -->
+    <div class="search-wrapper">
+        <div class="search-card">
+            <label for="email-input"><i class="fas fa-envelope me-1" style="color:#bfa378;"></i> Tu correo electrónico</label>
+            <div class="search-input-group">
+                <input
+                    type="email"
+                    id="email-input"
+                    placeholder="ejemplo@correo.com"
+                    autocomplete="email"
+                    spellcheck="false"
+                >
+                <button id="btn-buscar" onclick="buscarCitas()">
+                    <i class="fas fa-search"></i> Buscar mis citas
+                </button>
+            </div>
+            <div id="alert-email" class="alert-portal alert alert-danger mt-2" role="alert"></div>
+        </div>
+    </div>
+
+    <!-- ===== ÁREA DE RESULTADOS ===== -->
+    <div class="results-section">
+
+        <!-- Loader -->
+        <div class="portal-loader" id="portal-loader">
+            <div class="spinner"></div>
+            <p>Buscando tus citas...</p>
+        </div>
+
+        <!-- Estado vacío -->
+        <div class="empty-state" id="empty-state">
+            <div class="icon-circle">
+                <i class="fas fa-calendar-xmark"></i>
+            </div>
+            <h3>Sin visitas encontradas</h3>
+            <p>No encontramos citas agendadas para ese correo.</p>
+        </div>
+
+        <!-- Encabezado de resultados -->
+        <div id="results-header">
+            <h2 id="results-title">Tus visitas</h2>
+            <p id="results-subtitle"></p>
+        </div>
+
+        <!-- Listado de tarjetas -->
+        <div id="citas-container"></div>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="cargador.js"></script>
+    <script type="module" src="script.js"></script>
+
+    <script>
+        // ============================================================
+        // PORTAL DE CITAS DEL CLIENTE — mis-citas.html
+        // Lógica: búsqueda por email, cancelar y reprogramar
+        // Endpoints: /api/citas3/mis-citas   GET
+        //            /api/citas3/:id/cancelar PUT
+        //            /api/citas3/:id          PUT
+        // ============================================================
+
+        let emailActual = '';
+
+        // ── Mapa de estado → clase CSS ──────────────────────────────
+        function claseEstado(estado) {
+            const s = (estado || '').toLowerCase();
+            if (s.includes('confirm')) return 'estado-confirmada';
+            if (s.includes('pendiente')) return 'estado-pendiente';
+            if (s.includes('cancel')) return 'estado-cancelada';
+            if (s.includes('realiz')) return 'estado-realizada';
+            return 'estado-otro';
+        }
+
+        // ── Formatear fecha legible ──────────────────────────────────
+        function formatFecha(fechaStr) {
+            if (!fechaStr) return '—';
+            // fechaStr puede venir como "2024-11-15" o ISO completo
+            const d = new Date(fechaStr.includes('T') ? fechaStr : fechaStr + 'T00:00:00');
+            return d.toLocaleDateString('es-CL', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // ── Formatear hora ───────────────────────────────────────────
+        function formatHora(horaStr) {
+            if (!horaStr) return '—';
+            // Puede llegar "HH:MM:SS" o "HH:MM"
+            return horaStr.substring(0, 5) + ' hrs';
+        }
+
+        // ── Mostrar/ocultar alerta de email ─────────────────────────
+        function mostrarAlertaEmail(msg) {
+            const el = document.getElementById('alert-email');
+            el.textContent = msg;
+            el.style.display = msg ? 'block' : 'none';
+        }
+
+        // ── BUSCAR CITAS ─────────────────────────────────────────────
+        async function buscarCitas() {
+            const emailEl = document.getElementById('email-input');
+            const email = emailEl.value.trim();
+
+            mostrarAlertaEmail('');
+
+            if (!email) {
+                mostrarAlertaEmail('Por favor, ingresa tu correo electrónico.');
+                emailEl.focus();
+                return;
+            }
+
+            // Validación básica de formato
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                mostrarAlertaEmail('El correo no tiene un formato válido.');
+                emailEl.focus();
+                return;
+            }
+
+            emailActual = email;
+
+            // Deshabilitar botón y mostrar loader
+            const btn = document.getElementById('btn-buscar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Buscando...';
+
+            setUI('loading');
+
+            try {
+                const res = await fetch(`/api/citas3/mis-citas?email=${encodeURIComponent(email)}`);
+
+                if (!res.ok) {
+                    throw new Error(`Error del servidor: ${res.status}`);
+                }
+
+                const data = await res.json();
+                // Aceptar tanto { citas: [] } como array directo
+                const citas = Array.isArray(data) ? data : (data.citas || data.data || []);
+
+                renderCitas(citas);
+
+            } catch (err) {
+                console.error('Error al buscar citas:', err);
+                setUI('empty');
+                mostrarAlertaEmail('No se pudo conectar con el servidor. Intenta más tarde.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Buscar mis citas';
+            }
+        }
+
+        // ── Controlar visibilidad de secciones ──────────────────────
+        function setUI(state) {
+            document.getElementById('portal-loader').style.display   = state === 'loading'  ? 'block' : 'none';
+            document.getElementById('empty-state').style.display      = state === 'empty'    ? 'flex'  : 'none';
+            document.getElementById('results-header').style.display   = state === 'results'  ? 'block' : 'none';
+        }
+
+        // ── RENDERIZAR TARJETAS ──────────────────────────────────────
+        function renderCitas(citas) {
+            const container = document.getElementById('citas-container');
+            container.innerHTML = '';
+
+            if (!citas || citas.length === 0) {
+                setUI('empty');
+                return;
+            }
+
+            setUI('results');
+
+            // Encabezado
+            document.getElementById('results-title').textContent =
+                citas.length === 1 ? '1 visita encontrada' : `${citas.length} visitas encontradas`;
+            document.getElementById('results-subtitle').textContent =
+                `Para el correo: ${emailActual}`;
+
+            citas.forEach(cita => {
+                const estaInactiva =
+                    (cita.estado || '').toLowerCase().includes('cancel') ||
+                    (cita.estado || '').toLowerCase().includes('realiz');
+
+                const card = document.createElement('div');
+                card.className = `cita-card${estaInactiva ? ' cita-inactiva' : ''}`;
+                card.id = `cita-${cita.id}`;
+
+                card.innerHTML = `
+                    <div class="cita-card-header">
+                        <div class="cita-propiedad">
+                            <i class="fas fa-home me-2" style="color:#bfa378;"></i>
+                            ${escHTML(cita.propiedad_titulo || 'Propiedad sin título')}
+                        </div>
+                        <span class="estado-badge ${claseEstado(cita.estado)}">
+                            ${escHTML(cita.estado || 'Sin estado')}
+                        </span>
+                    </div>
+                    <div class="cita-card-body">
+                        <div class="cita-info-row">
+                            <div class="cita-info-item">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>${formatFecha(cita.fecha)}</span>
+                            </div>
+                            <div class="cita-info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${formatHora(cita.hora_inicio)}</span>
+                            </div>
+                        </div>
+
+                        ${!estaInactiva ? `
+                        <div class="cita-actions">
+                            <button class="btn-cancelar" onclick="cancelarCita(${cita.id})">
+                                <i class="fas fa-times-circle"></i> Cancelar visita
+                            </button>
+                            <button class="btn-reprogramar" onclick="toggleReprog(${cita.id})">
+                                <i class="fas fa-calendar-pen"></i> Reprogramar
+                            </button>
+                        </div>
+
+                        <!-- Formulario de reprogramación -->
+                        <div class="reprog-form" id="reprog-${cita.id}">
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <label for="reprog-fecha-${cita.id}">Nueva fecha</label>
+                                    <input type="date" id="reprog-fecha-${cita.id}" min="${new Date().toISOString().split('T')[0]}">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="reprog-hora-${cita.id}">Nueva hora</label>
+                                    <input type="time" id="reprog-hora-${cita.id}">
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                <button class="btn-guardar-reprog" id="btn-guardar-${cita.id}" onclick="guardarReprog(${cita.id})">
+                                    <i class="fas fa-check"></i> Guardar cambios
+                                </button>
+                                <button class="btn-cancelar-reprog" onclick="toggleReprog(${cita.id})">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                        ` : `
+                        <p class="text-muted" style="font-size:0.82rem; margin:0;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Esta visita ya no puede modificarse.
+                        </p>
+                        `}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // ── Escapar HTML para evitar XSS ────────────────────────────
+        function escHTML(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ── TOGGLE FORMULARIO DE REPROGRAMACIÓN ─────────────────────
+        function toggleReprog(id) {
+            const form = document.getElementById(`reprog-${id}`);
+            if (!form) return;
+            const isOpen = form.style.display === 'block';
+            form.style.display = isOpen ? 'none' : 'block';
+        }
+
+        // ── CANCELAR CITA ────────────────────────────────────────────
+        async function cancelarCita(id) {
+            const ok = confirm(
+                '¿Estás seguro de que deseas cancelar esta visita?\n\nEsta acción no puede deshacerse.'
+            );
+            if (!ok) return;
+
+            try {
+                const res = await fetch(`/api/citas3/${id}/cancelar`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await res.json();
+
+                if (res.ok && (data.success !== false)) {
+                    alert('✅ Tu visita ha sido cancelada correctamente.');
+                    await buscarCitas(); // recargar la lista
+                } else {
+                    alert('❌ No se pudo cancelar la visita: ' + (data.message || 'Error del servidor.'));
+                }
+            } catch (err) {
+                console.error('Error al cancelar:', err);
+                alert('❌ Error de conexión. Por favor, intenta más tarde.');
+            }
+        }
+
+        // ── GUARDAR REPROGRAMACIÓN ───────────────────────────────────
+        async function guardarReprog(id) {
+            const fechaInput = document.getElementById(`reprog-fecha-${id}`);
+            const horaInput  = document.getElementById(`reprog-hora-${id}`);
+            const btnGuardar = document.getElementById(`btn-guardar-${id}`);
+
+            const fecha = fechaInput ? fechaInput.value : '';
+            const hora  = horaInput  ? horaInput.value  : '';
+
+            if (!fecha || !hora) {
+                alert('⚠️ Por favor selecciona una nueva fecha y hora.');
+                return;
+            }
+
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Guardando...';
+
+            try {
+                const res = await fetch(`/api/citas3/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fecha: fecha, hora_inicio: hora })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && (data.success !== false)) {
+                    alert('✅ Tu visita ha sido reprogramada correctamente.');
+                    await buscarCitas(); // recargar la lista
+                } else {
+                    alert('❌ No se pudo reprogramar: ' + (data.message || 'Error del servidor.'));
+                }
+            } catch (err) {
+                console.error('Error al reprogramar:', err);
+                alert('❌ Error de conexión. Por favor, intenta más tarde.');
+            } finally {
+                if (btnGuardar) {
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="fas fa-check"></i> Guardar cambios';
+                }
+            }
+        }
+
+        // ── Permitir buscar con Enter ────────────────────────────────
+        document.getElementById('email-input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') buscarCitas();
+        });
+    </script>
+
+</body>
+
+</html>
