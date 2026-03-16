@@ -506,16 +506,23 @@ function setupRecoveryLogic() {
             const form = e.target.id === 'recovery-form' ? e.target : e.target.closest('#recovery-form');
             const emailInput = document.getElementById('recovery-email');
             const btn = form.querySelector('button');
-            const originalText = btn.textContent;
+            
+            const emailValue = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailValue)) {
+                alert("Por favor, ingresa un correo electrónico válido.");
+                return;
+            }
 
+            const originalText = btn.textContent;
             btn.textContent = "Verificando...";
             btn.disabled = true;
 
             try {
-                const res = await fetch(`${API_URL}forgot-password`, {
+                const res = await fetch(`https://n8n-marlen-auto.onrender.com/webhook-test/recuperar_contrasena`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailInput.value })
+                    body: JSON.stringify({ email: emailValue })
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -528,7 +535,7 @@ function setupRecoveryLogic() {
                         if (typeof switchAuthMode === 'function') switchAuthMode('login');
                     }
                 } else {
-                    alert("❌ " + data.message);
+                    alert("❌ " + (data.message || "No se pudo procesar la solicitud."));
                 }
             } catch (err) { alert("Error de conexión"); }
             finally { btn.textContent = originalText; btn.disabled = false; }
