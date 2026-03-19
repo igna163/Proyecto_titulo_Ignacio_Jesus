@@ -891,7 +891,7 @@
                 };
 
                 // URL de producción n8n
-                const res = await fetch('https://n8n-marlen-auto.onrender.com/webhook-test/contacto-web', {
+                const res = await fetch('https://n8n-marlen-auto.onrender.com/webhook/contacto-web', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
@@ -899,7 +899,7 @@
 
                 const data = await res.json();
 
-                if (data.success) {
+                if (res.ok) {
                     btnSubmit.innerText = "¡Enviado!";
                     btnSubmit.style.backgroundColor = "#2ecc71";
                     btnSubmit.style.borderColor = "#2ecc71";
@@ -907,7 +907,7 @@
 
                     document.getElementById('main-contact-form').reset();
 
-                    alert("✅ ¡Mensaje enviado con éxito! Marlen se contactará contigo pronto.");
+                    alert("Este correo fue enviado correctamente a su correo");
 
                     setTimeout(() => {
                         btnSubmit.disabled = false;
@@ -917,7 +917,7 @@
                         btnSubmit.style.color = "";
                     }, 1500);
                 } else {
-                    alert("❌ " + (data.message || "Error al enviar. Inténtelo más tarde."));
+                    alert("❌ Error al enviar. Inténtelo más tarde.");
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = "Enviar Mensaje";
                 }

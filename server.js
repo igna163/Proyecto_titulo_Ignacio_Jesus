@@ -2570,6 +2570,11 @@ app.put('/api/citas3/:id/cancelar', async (req, res) => {
 //    FIN RUTAS CITAS3
 // =======================================================
 
+// Comodín para página 404 (Debe ir al final de todas las rutas)
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname, '404.html'));
+});
+
 app.listen(port, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 });
