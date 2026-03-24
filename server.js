@@ -14,6 +14,14 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Helper function para manejar errores y evitar caída del servidor (500)
+function errorResponse(res, message) {
+    console.error("❌ Error API:", message);
+    if (!res.headersSent) {
+        res.status(500).json({ success: false, message: "Error interno del servidor", detalle: message });
+    }
+}
+
 // =======================================================
 // RUTA SSR: web-ficha.html con Open Graph dinámico
 // IMPORTANTE: Debe ir ANTES de express.static()
@@ -576,34 +584,41 @@ app.put('/api/users/:id', async (req, res) => {
 
 app.get('/api/propiedades', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM propiedades WHERE active = TRUE ORDER BY id DESC');
-        const propiedadesAdaptadas = result.rows.map(row => ({
-            id: row.id,
-            title: row.titulo,
-            operation: row.tipo_operacion,
-            type: row.tipo_propiedad,
-            price: row.precio ? (row.moneda || 'UF') + ' ' + row.precio.toLocaleString('es-CL') : 'Consulte Precio',
-            rawPrice: row.precio,
-            location: row.comuna,
-            desc: row.descripcion,
-            ggcc: row.gastos_comunes,
-            specs: {
-                dorms: row.dormitorios,
-                baths: row.banos,
-                m2Total: row.m2_totales,
-                m2Util: row.m2_utiles,
-                parking: row.estacionamientos,
-                pool: row.piscina,
-                elevator: row.ascensor,
-                quincho: row.quincho
-            },
-            images: {
-                main: row.imagen_url || 'https://via.placeholder.com/400',
-                gallery: row.galeria || []
-            },
-            estado: row.estado,
-            active: row.active
-        }));
+        const result = await pool.query("SELECT * FROM propiedades2 WHERE estado_publicacion = 'PUBLICADA' ORDER BY id DESC");
+        const propiedadesAdaptadas = result.rows.map(row => {
+            const isVenta = row.operacion_venta;
+            const price = isVenta ? row.precio_venta : row.precio_arriendo;
+            const moneda = isVenta ? row.moneda_venta : row.moneda_arriendo;
+            const detalles = row.detalles_json || {};
+            
+            return {
+                id: row.id,
+                title: row.titulo_publicacion || 'Propiedad Excelente',
+                operation: isVenta ? 'Venta' : 'Arriendo',
+                type: row.tipo_propiedad || 'Propiedad',
+                price: price ? (moneda || 'UF') + ' ' + Number(price).toLocaleString('es-CL') : 'Consulte',
+                rawPrice: price || 0,
+                location: row.comuna || '',
+                desc: row.descripcion_publica || '',
+                ggcc: row.gastos_comunes || 0,
+                specs: {
+                    dorms: row.dormitorios || 0,
+                    baths: row.banos || 0,
+                    m2Total: row.superficie_total || 0,
+                    m2Util: row.superficie_util || 0,
+                    parking: row.estacionamientos || 0,
+                    pool: detalles.piscina || false,
+                    elevator: detalles.ascensor || false,
+                    quincho: detalles.quincho || detalles.barbecue || false
+                },
+                images: {
+                    main: row.imagen_principal || 'https://via.placeholder.com/400',
+                    gallery: []
+                },
+                estado: row.estado_publicacion || 'Activa',
+                active: true
+            };
+        });
         res.json(propiedadesAdaptadas);
     } catch (err) { errorResponse(res, err.message); }
 });
@@ -621,35 +636,46 @@ app.get('/api/propiedades/destacadas', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 6;
         const op = req.query.operacion; // opcional: 'Venta' | 'Arriendo'
-        let query = 'SELECT * FROM propiedades WHERE active = TRUE';
+        
+        let query = "SELECT * FROM propiedades2 WHERE estado_publicacion = 'PUBLICADA'";
         const params = [];
-        if (op) { params.push(op); query += ` AND tipo_operacion = $${params.length}`; }
+        if (op === 'Venta') { query += " AND operacion_venta = true"; }
+        if (op === 'Arriendo') { query += " AND operacion_arriendo = true"; }
+        
         query += ` ORDER BY id DESC LIMIT $${params.length + 1}`;
         params.push(limit);
+        
         const result = await pool.query(query, params);
-        const mapped = result.rows.map(row => ({
-            id: row.id,
-            title: row.titulo,
-            operation: row.tipo_operacion,
-            type: row.tipo_propiedad,
-            price: row.precio ? (row.moneda || 'UF') + ' ' + Number(row.precio).toLocaleString('es-CL') : 'Consulte',
-            rawPrice: row.precio,
-            moneda: row.moneda || 'UF',
-            location: row.comuna,
-            desc: row.descripcion,
-            specs: {
-                dorms: row.dormitorios,
-                baths: row.banos,
-                m2Total: row.m2_totales,
-                m2Util: row.m2_utiles,
-                parking: row.estacionamientos
-            },
-            images: {
-                main: row.imagen_url || 'https://placehold.co/400x300/f9f7f2/bfa378?text=Sin+foto',
-                gallery: row.galeria || []
-            },
-            estado: row.estado
-        }));
+        
+        const mapped = result.rows.map(row => {
+            const isVenta = row.operacion_venta;
+            const price = isVenta ? row.precio_venta : row.precio_arriendo;
+            const moneda = isVenta ? row.moneda_venta : row.moneda_arriendo;
+            
+            return {
+                id: row.id,
+                title: row.titulo_publicacion || 'Propiedad Excelente',
+                operation: isVenta ? 'Venta' : 'Arriendo',
+                type: row.tipo_propiedad || 'Propiedad',
+                price: price ? (moneda || 'UF') + ' ' + Number(price).toLocaleString('es-CL') : 'Consulte',
+                rawPrice: price || 0,
+                moneda: moneda || 'UF',
+                location: row.comuna || '',
+                desc: row.descripcion_publica || '',
+                specs: {
+                    dorms: row.dormitorios || 0,
+                    baths: row.banos || 0,
+                    m2Total: row.superficie_total || 0,
+                    m2Util: row.superficie_util || 0,
+                    parking: row.estacionamientos || 0
+                },
+                images: {
+                    main: row.imagen_principal || 'https://placehold.co/400x300/f9f7f2/bfa378?text=Sin+foto',
+                    gallery: []
+                },
+                estado: row.estado_publicacion || 'Activa'
+            };
+        });
         res.json(mapped);
     } catch (err) { errorResponse(res, err.message); }
 });
@@ -1998,7 +2024,10 @@ app.post('/api/visitas/registrar', async (req, res) => {
             ON CONFLICT (fecha) DO UPDATE SET contador = visitas_web.contador + 1
         `);
         res.json({ success: true });
-    } catch (err) { res.status(500).json({ success: false }); }
+    } catch (err) { 
+        console.error("❌ Error DB en registrar visitas:", err.message);
+        errorResponse(res, err.message); 
+    }
 });
 
 // B. RUTA PARA EL GRÁFICO DE 7 DÍAS
